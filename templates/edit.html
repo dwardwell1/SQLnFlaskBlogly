@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block title%}{{user.first_name}}'s Edit Page{% endblock %}
+
+{% block content %} 
+<h2>Edit a User</h2>
+<form action="/users/{{user.id}}/edit" method="POST">
+    <label for="first">First Name</label>
+    <input id="first" type="text" name="firstName" value="{{user.first_name}}" >
+    <label for="last">Last Name</label>
+    <input id="last" type="text" name="lastName" value="{{user.last_name}}" >
+    <label for="imgurl">Profile Picture URL</label>
+    <input id="imgurl" type="text" name="imgURL" value="{{user.image_url}}" >
+    
+    <input type="submit" value="Save">
+</form>
+<a href="/users/{{user.id}}"><button>Cancel</button></a> 
+{% endblock%}
+
+<!-- Had stuggle getting buttons straight, an href within a form that send you back home (cancel) does not have permission to do so -->

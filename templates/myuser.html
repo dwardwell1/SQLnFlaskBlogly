@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block title%}{{user.first_name}}'s Page{% endblock %}
+
+{% block content %} 
+<h1>Hello {{user.last_name}}</h1>
+{{user.first_name}} {{user.last_name}} <img id="big" src="{{user.image_url}}" alt="">
+<a href="/users/{{user.id}}/edit"><button>Edit</button></a>
+<form action="/users/{{user.id}}/delete" method="POST">
+<a href="/users/{{user.id}}/delete" ><button>Delete</button></a></form>
+{% endblock%}
+
+<!-- Did I need to make a form to get to the delete POST route? -->
