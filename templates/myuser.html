@@ -4,10 +4,28 @@
 
 {% block content %} 
 <h1>Hello {{user.last_name}}</h1>
-{{user.first_name}} {{user.last_name}} <img id="big" src="{{user.image_url}}" alt="">
+<img id="big" src="{{user.img_url}}" alt="">
+{{user.first_name}} {{user.last_name}} 
+<br>
 <a href="/users/{{user.id}}/edit"><button>Edit</button></a>
 <form action="/users/{{user.id}}/delete" method="POST">
 <a href="/users/{{user.id}}/delete" ><button>Delete</button></a></form>
+<h2>My Posts</h2>
+<ul>
+    {% for post in posts %}
+    {% if post.title %}
+    <li> <a href="/posts/{{post.id}}">{{post.title}}</a> </li>
+    {% else %}
+    <li> <a href="/posts/{{post.id}}">No Title</a> </li>
+    {% endif %}
+    {% endfor %}
+
+    
+  
+   
+</ul>
+<a href="/users/{{user.id}}/posts/new"><button>Add Post</button></a>
 {% endblock%}
 
 <!-- Did I need to make a form to get to the delete POST route? -->
+<!-- Users keeps doubling http://127.0.0.1:5000/users/users/1/posts/new -->
