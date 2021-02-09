@@ -1,5 +1,6 @@
 """Blogly application."""
 
+
 from flask import Flask, request, render_template, redirect, flash, session
 from flask_debugtoolbar import DebugToolbarExtension
 from models import *
@@ -74,11 +75,14 @@ def delete_user(id):
     db.session.commit()
     return redirect('/users')
 
+#posts
+
 @app.route('/users/<int:id>/posts/new')
 def new_post_form(id):
     """ new post from """
     user = User.query.get_or_404(id)
-    return render_template("postform.html",user=user)
+    tags = Tag.query.all()
+    return render_template("postform.html",user=user, tags=tags)
 
 @app.route('/users/<int:id>/posts/new', methods=["POST"])
 def new_post_submit(id):
@@ -86,19 +90,24 @@ def new_post_submit(id):
     user = User.query.get_or_404(id)
     title = request.form['title']
     content = request.form['content']
-    
+    tag_ids = [int(num) for num in request.form.getlist("tags")]
+    tags = Tag.query.filter(Tag.id.in_(tag_ids)).all()
+    """ How did adding an array of tags work in this context? """
 
-    new_post = Post(title=title, content=content, user_id=id)
+    new_post = Post(title=title, content=content, user_id=id, tags=tags)
     db.session.add(new_post)
     db.session.commit()
-    
-    return redirect(f"/users/{user.id}")
 
+    
+    db.session.commit()
+    return redirect(f"/users/{user.id}")
+   
 @app.route('/posts/<int:id>')
 def post(id):
     """ Show post """
     post = Post.query.get_or_404(id)
-    return render_template("post.html",post=post)
+    tags = PostTag.query.filter_by(post_id = id).all()
+    return render_template("post.html",post=post, tags=tags)
 
 
 
@@ -106,7 +115,7 @@ def post(id):
 def delete_post(id):
     """ Delete Post"""
     post = Post.query.filter(Post.id == id).first()
-    user_id = post.poster.id
+    user_id = post.user.id
     post = Post.query.filter(Post.id == id).delete()
    
     db.session.commit()
@@ -117,7 +126,9 @@ def delete_post(id):
 def edit_post(id):
     """ edit post """
     post = Post.query.get_or_404(id)
-    return render_template("editpost.html",post=post)
+    tags = Tag.query.all()
+
+    return render_template("editpost.html",post=post, tags=tags)
 
 @app.route('/posts/<int:id>/edit', methods=["POST"])
 def edit_post_submit(id):
@@ -126,11 +137,17 @@ def edit_post_submit(id):
     post.title = request.form['title']
     post.content = request.form['content']
     post.created_at = dt
+    tag_ids = [int(num) for num in request.form.getlist("tags")]
+    tags = Tag.query.filter(Tag.id.in_(tag_ids)).all()
+    post.tags = tags
     
 
     db.session.commit()
     
     return redirect(f'/posts/{post.id}')
+
+#tags
+
 
 
 @app.route('/tags')
