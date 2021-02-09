@@ -1,4 +1,4 @@
-from models import User, Post, db 
+from models import *
 from app import app
 db.drop_all()
 db.create_all()
@@ -13,11 +13,33 @@ p3 = Post(title="It burns!", content="I'm in hell. literal hell. you get used to
 p4 = Post(title="Stocks", content="Yes, I buy stocks. How do you think I got this lousy t-shirt!", user_id=3)
 
 
+t1 = Tag(name='Play!')
+t2 = Tag(name='Relax!')
+t3 = Tag(name='Sadness')
+t4 = Tag(name='Sports')
+t5 = Tag(name='Animals')
+
+pt1 = PostTag(post_id = 1, tag_id=1)
+pt2 = PostTag(post_id = 1, tag_id=2)
+pt3 = PostTag(post_id = 2, tag_id=1)
+pt4 = PostTag(post_id = 3, tag_id=3)
+pt5 = PostTag(post_id = 3, tag_id=4)
+pt6 = PostTag(post_id = 1, tag_id=5)
+
+
 db.session.add_all([u1,u2,u3])
 
 
 db.session.commit()
 
 db.session.add_all([p1,p2,p3,p4])
+
+db.session.commit()
+
+db.session.add_all([t1,t2,t3,t4,t5])
+
+db.session.commit()
+
+db.session.add_all([pt1,pt2,pt3,pt4,pt5,pt6])
 
 db.session.commit()

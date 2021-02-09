@@ -37,5 +37,23 @@ class Post(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     poster = db.relationship('User', backref='user')
 
-    # IT STILL LET ME SUBMIT WITHOUT TITLE, SO ITS STILL NULLABLE
+    tags = db.relationship('Tag',  secondary='posttags', backref='post', cascade='all,delete', passive_deletes=True)
+
+class PostTag(db.Model):
+    __tablename__= 'posttags'
+
+    post_id = db.Column(db.Integer, db.ForeignKey('posts.id', ondelete="cascade" ), primary_key=True)
+    tag_id = db.Column(db.Integer, db.ForeignKey('tags.id' ), primary_key=True)
+
+
+class Tag(db.Model):
+    __tablename__='tags'
+
+    def __repr__(self):
+        t = self
+        return f"{t.name}"
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    name = db.Column(db.String(30), nullable=False, unique=True)
+    
 

@@ -2,7 +2,7 @@
 
 from flask import Flask, request, render_template, redirect, flash, session
 from flask_debugtoolbar import DebugToolbarExtension
-from models import db, connect_db, User, Post
+from models import *
 from datetime import datetime
 dt = datetime.today().replace(microsecond=0)
 
@@ -131,3 +131,64 @@ def edit_post_submit(id):
     db.session.commit()
     
     return redirect(f'/posts/{post.id}')
+
+
+@app.route('/tags')
+def list_tags():
+    """ List all tags """
+    tags = Tag.query.all()
+    return render_template('tags.html', tags=tags)
+
+@app.route('/tags/<int:id>')
+def tag(id):
+    """ Show a tags associated posts """
+    tag = Tag.query.get_or_404(id)
+    return render_template('tag.html', tag=tag)
+
+@app.route('/tags/new')
+def new_tag():
+    """ Render new tag template """
+    return render_template('newtag.html')
+
+@app.route('/tags/new', methods=["POST"])
+def tag_submit():
+    """ POST new tag """
+    tag_name = request.form['name']
+
+    new_tag = Tag(name=tag_name)
+
+    db.session.add(new_tag)
+    db.session.commit()
+
+    return redirect('/tags')
+
+
+@app.route('/tags/<int:id>/edit')
+def tag_edit(id):
+    """ Edit tag form """
+    tag_id = Tag.query.get_or_404(id)
+
+    return render_template('edittag.html', tag= tag_id)
+
+@app.route('/tags/<int:id>/edit', methods=["POST"])
+def tag_submit_edit(id):
+    """ Submit Tag Edit"""
+    tag = Tag.query.get_or_404(id)
+
+    tag.name = request.form['name']
+
+    db.session.commit()
+
+    return redirect('/tags')
+
+@app.route('/tags/<int:id>/delete', methods=['POST'])
+def delete_tag(id):
+
+    # tag = Tag.query.get_or_404(id)
+    tag = Tag.query.filter(Tag.id == id).delete()
+
+    db.session.commit()
+
+    return redirect('/tags') 
+
+
