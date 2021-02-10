@@ -106,8 +106,8 @@ def new_post_submit(id):
 def post(id):
     """ Show post """
     post = Post.query.get_or_404(id)
-    tags = PostTag.query.filter_by(post_id = id).all()
-    return render_template("post.html",post=post, tags=tags)
+    
+    return render_template("post.html",post=post)
 
 
 
@@ -202,8 +202,9 @@ def tag_submit_edit(id):
 def delete_tag(id):
 
     # tag = Tag.query.get_or_404(id)
-    tag = Tag.query.filter(Tag.id == id).delete()
+    tag = Tag.query.get_or_404(id)
 
+    db.session.delete(tag)
     db.session.commit()
 
     return redirect('/tags') 
